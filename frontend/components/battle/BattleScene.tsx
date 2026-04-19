@@ -3,22 +3,22 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { audio } from "@/lib/audio";
+import type { Level, Question, ThemeManifest, ThemeMonster } from "@/lib/types";
+import {
+    avatarForCharacter,
+    battleBgForLevel,
+    monsterForLevel,
+    segmentForLevel,
+} from "@/lib/useTheme";
+import type { BattlePhase } from "@/store/useBattleStore";
+import { useUserStore } from "@/store/useUserStore";
 import { CharacterSprite } from "./CharacterSprite";
 import { DamageNumbers, type DamagePop } from "./DamageNumber";
 import { HpBar } from "./HpBar";
 import { MicButton } from "./MicButton";
 import { SpeechBubble } from "./SpeechBubble";
-import { Button } from "@/components/ui/button";
-import { audio } from "@/lib/audio";
-import {
-  avatarForCharacter,
-  battleBgForLevel,
-  monsterForLevel,
-  segmentForLevel,
-} from "@/lib/useTheme";
-import type { Level, Question, ThemeManifest, ThemeMonster } from "@/lib/types";
-import type { BattlePhase } from "@/store/useBattleStore";
-import { useUserStore } from "@/store/useUserStore";
 
 type SpriteTrigger = "idle" | "attack" | "hit" | "faint" | "victory";
 
@@ -206,12 +206,12 @@ export function BattleScene({
         </Button>
       </div>
 
-      <div className="relative flex flex-1 items-end justify-between px-10 pb-10 pt-10">
+      <div className="relative flex flex-1 items-end justify-between gap-8 px-6 pb-10 pt-10 md:px-10">
         <DamageNumbers pops={pops} />
 
         <div
-          className="z-10 flex max-w-xl flex-col items-start gap-3"
-          style={{ transform: "translate(200px, -120px)" }}
+          className="z-10 flex w-[min(42vw,36rem)] max-w-[36rem] flex-col items-start gap-3"
+          style={{ transform: "translateY(-100px)" }}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="mb-2 w-full">
@@ -237,11 +237,11 @@ export function BattleScene({
         </div>
 
         <div
-          className="z-10 flex flex-col items-end gap-3"
-          style={{ transform: "translate(-200px, -120px)" }}
+          className="z-10 flex w-[min(42vw,36rem)] max-w-[36rem] flex-col items-end gap-3"
+          style={{ transform: "translateY(-100px)" }}
         >
-          <div className="mb-2">
-            <SpeechBubble text={bubbleText} from="right" />
+          <div className="mb-2 w-full">
+            <SpeechBubble text={bubbleText} from="right" className="w-full" />
           </div>
           <CharacterSprite
             emoji={monster?.emoji ?? "👾"}
@@ -407,7 +407,7 @@ function AnswerBubble({
     <motion.div
       initial={{ opacity: 0, y: 10, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      className="relative ml-6 rounded-2xl border-4 border-black bg-white px-5 py-4 text-slate-900 shadow-2xl"
+      className="relative ml-6 w-full rounded-2xl border-4 border-black bg-white px-5 py-4 text-slate-900 shadow-2xl"
     >
       {question.type === "mcq" && question.options ? (
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
