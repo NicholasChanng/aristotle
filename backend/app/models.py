@@ -318,3 +318,70 @@ class ValidateAnswerResponse(BaseModel):
     feedback: str
     correct: bool
     transcript: str | None = None
+
+
+class SkillDagNode(BaseModel):
+    id: str
+    label: str
+    level: int
+    status: Literal["locked", "mastered"]
+    lecture_refs: list[str] = Field(default_factory=list)
+    mastery_signals: list[str] = Field(default_factory=list)
+
+
+class SkillDagEdge(BaseModel):
+    id: str
+    source: str
+    target: str
+    rationale: str
+
+
+class SkillDagGraph(BaseModel):
+    course_id: str
+    nodes: list[SkillDagNode]
+    edges: list[SkillDagEdge]
+    max_level: int = 0
+
+
+class SkillsGraphRequest(BaseModel):
+    course_id: str = "cs188"
+    lecture_ids: list[str] = Field(default_factory=list)
+    mastered_lecture_ids: list[str] = Field(default_factory=list)
+
+
+class SkillsGraphMetadata(BaseModel):
+    total_elapsed_ms: int
+    retrieval_elapsed_ms: int
+    llm_elapsed_ms: int
+    retrieved_docs: int
+    context_chars: int
+
+
+class SkillsGraphResponse(BaseModel):
+    graph: SkillDagGraph
+    metadata: SkillsGraphMetadata
+
+
+class SkillInsightRequest(BaseModel):
+    course_id: str = "cs188"
+    lecture_ids: list[str] = Field(default_factory=list)
+    graph: SkillDagGraph | None = None
+
+
+class SkillInsightAddon(BaseModel):
+    type: str
+    title: str
+    content: str
+
+
+class SkillInsightVisualization(BaseModel):
+    type: str
+    content: str
+
+
+class SkillInsightResponse(BaseModel):
+    skill_id: str
+    summary: list[str]
+    pseudocode: str | None = None
+    visualization: SkillInsightVisualization | None = None
+    addons: list[SkillInsightAddon] = Field(default_factory=list)
