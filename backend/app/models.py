@@ -11,7 +11,7 @@ any change here requires a matching change there.
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Any
+from typing import Any, Literal
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
@@ -273,3 +273,48 @@ class PurchaseRequest(BaseModel):
 class AvatarResponse(BaseModel):
     avatar: AvatarConfig
     points_remaining: int
+
+
+class QuizQuestionMetadata(BaseModel):
+    id: int
+    question_type: Literal["mcq", "voice"]
+    content: str
+    answer_choices: list[str] | None = None
+    explanation_for_answer_choices: list[str] | None = None
+    index_of_correct_answer: int | None = None
+    response_requirements: list[str] | None = None
+    topic: str | None = None
+
+
+class GenerateQuestionsRequest(BaseModel):
+    lecture_ids: list[str]
+    num_of_questions: int = Field(ge=1, le=30)
+    difficulty: int = Field(ge=0, le=10)
+
+
+class GenerateQuestionsResponse(BaseModel):
+    question_data: list[QuizQuestionMetadata]
+    num_of_questions: int
+    metadata: "GenerateQuestionsMetadata | None" = None
+
+
+class GenerateQuestionsMetadata(BaseModel):
+    total_elapsed_ms: int
+    retrieval_elapsed_ms: int
+    llm_elapsed_ms: int
+    retrieved_docs: int
+    context_chars: int
+    timeout_s: float
+    llm_calls: int
+
+
+class ValidateAnswerRequest(BaseModel):
+    user_response: str | None = None
+    audio_blob_b64: str | None = None
+    question_metadata: QuizQuestionMetadata
+
+
+class ValidateAnswerResponse(BaseModel):
+    feedback: str
+    correct: bool
+    transcript: str | None = None
