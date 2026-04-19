@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Volume2, VolumeX } from "lucide-react";
 
@@ -61,6 +62,14 @@ export default function WorldPage() {
           {manifest.narrative}
         </div>
       )}
+      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
+        <Link href="/skills">
+          <Image src="/assets/map_icon.png" alt="Skills" width={100} height={100} className="cursor-pointer transition-transform duration-200 hover:scale-125 drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]" />
+        </Link>
+        <Link href="/shop">
+          <Image src="/assets/shop_icon.png" alt="Shop" width={100} height={100} className="cursor-pointer transition-transform duration-200 hover:scale-125 drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]" />
+        </Link>
+      </div>
     </main>
   );
 }
@@ -93,16 +102,6 @@ function ToolRow({
         <Button size="sm" variant="ghost" onClick={toggleMute} aria-label="toggle audio">
           {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
         </Button>
-        <Link href="/skills">
-          <Button size="sm" variant="outline">
-            Skills
-          </Button>
-        </Link>
-        <Link href="/shop">
-          <Button size="sm" variant="outline">
-            Shop
-          </Button>
-        </Link>
       </div>
     </div>
   );
