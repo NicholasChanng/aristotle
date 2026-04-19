@@ -57,11 +57,6 @@ export default function WorldPage() {
           currentLevelId={world.current_level_id}
         />
       )}
-      {manifest?.narrative && (
-        <div className="pointer-events-none absolute left-6 top-32 max-w-sm rounded-md border border-yellow-500/30 bg-black/70 p-3 text-xs italic text-yellow-100 shadow-xl backdrop-blur">
-          {manifest.narrative}
-        </div>
-      )}
       <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
         <Link href="/skills">
           <Image src="/assets/map_icon.png" alt="Skills" width={100} height={100} className="cursor-pointer transition-transform duration-200 hover:scale-125 drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]" />
