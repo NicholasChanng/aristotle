@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api.routes import auth, battles, courses, progress, skills, world
+from .api.routes import auth, battles, courses, progress, skill_graph, skills, world
 from .config import settings
 from .db.session import init_db
 
@@ -36,6 +36,7 @@ app.include_router(courses.router, prefix=API_PREFIX)
 app.include_router(world.router, prefix=API_PREFIX)
 app.include_router(battles.router, prefix=API_PREFIX)
 app.include_router(skills.router, prefix=API_PREFIX)
+app.include_router(skill_graph.router, prefix=API_PREFIX)
 app.include_router(progress.router, prefix=API_PREFIX)
 
 
