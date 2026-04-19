@@ -11,7 +11,7 @@
       "bg_image": "/themes/greek/background/world/mountolympus.png",
       "battle_bg": "/themes/greek/background/battles/battle_mountolypus.png",
       "bg_gradient": "linear-gradient(180deg, #fff8e1 0%, #ffe082 40%, #ffb74d 100%)",
-      "music": "/themes/greek/music/olympus.mp3",
+      "music": "/assets/Greek%20Mythology%20Music%20-%20Hephaestus_%20God%20of%20the%20Forge.mp3",
       "music_tone": "Bright, triumphant French horns and harp arpeggios. Olympian fanfare."
     },
     {
@@ -21,7 +21,7 @@
       "bg_image": "/themes/greek/background/world/athens.png",
       "battle_bg": "/themes/greek/background/battles/battle_athens.png",
       "bg_gradient": "linear-gradient(180deg, #fff3e0 0%, #ffcc80 50%, #bf8050 100%)",
-      "music": "/themes/greek/music/athens.mp3",
+      "music": "/assets/Greek%20Mythology%20Music%20-%20Hephaestus_%20God%20of%20the%20Forge.mp3",
       "music_tone": "Lyre ostinato, pastoral flutes. Daytime civic bustle."
     },
     {
@@ -31,7 +31,7 @@
       "bg_image": "/themes/greek/background/world/aegen_sea.png",
       "battle_bg": "/themes/greek/background/battles/battle_aegen_sea.png",
       "bg_gradient": "linear-gradient(180deg, #b3e5fc 0%, #0288d1 60%, #01579b 100%)",
-      "music": "/themes/greek/music/aegean.mp3",
+      "music": "/assets/Greek%20Mythology%20Music%20-%20Hephaestus_%20God%20of%20the%20Forge.mp3",
       "music_tone": "Wordless female choir over rolling cellos. Mist and danger."
     },
     {
@@ -41,7 +41,7 @@
       "bg_image": "/themes/greek/background/world/jungle.png",
       "battle_bg": "/themes/greek/background/battles/battle_jungle.png",
       "bg_gradient": "linear-gradient(180deg, #aed581 0%, #558b2f 50%, #33691e 100%)",
-      "music": "/themes/greek/music/island.mp3",
+      "music": "/assets/Greek%20Mythology%20Music%20-%20Hephaestus_%20God%20of%20the%20Forge.mp3",
       "music_tone": "Percussive, primal drums with aulos wails. Untamed wilderness."
     },
     {
@@ -51,7 +51,7 @@
       "bg_image": "/themes/greek/background/world/hell.png",
       "battle_bg": "/themes/greek/background/battles/battle_hell.png",
       "bg_gradient": "linear-gradient(180deg, #3e2723 0%, #7f0000 50%, #000000 100%)",
-      "music": "/themes/greek/music/underworld.mp3",
+      "music": "/assets/Greek%20Mythology%20Music%20-%20Hephaestus_%20God%20of%20the%20Forge.mp3",
       "music_tone": "Choral bass chants, timpani, distant echoing strings. Dread and judgment."
     }
   ],
