@@ -1,60 +1,185 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import ReactFlow, {
+  Background,
+  Controls,
+  MiniMap,
+  type Edge,
+  type Node,
+  type NodeMouseHandler,
+} from "reactflow";
+import "reactflow/dist/style.css";
 
 import { TopBar } from "@/components/layout/TopBar";
+import { SkillDetailPanel } from "@/components/skills/SkillDetailPanel";
+import { SkillNode } from "@/components/skills/SkillNode";
 import { api } from "@/lib/api";
-import type { SkillsGraph } from "@/lib/types";
+import { layoutSkillGraph } from "@/lib/skillGraphLayout";
+import {
+  lectureIdFromOrderIndex,
+  type SkillDagNode,
+  type WorldResponse,
+} from "@/lib/types";
+import { useSkillGraphStore } from "@/store/useSkillGraphStore";
 
-/**
- * Skills Graph View (SRS 4.1.3, FR-SKL-01..06).
- *
- * Owner: Track-3 (Frontend-Skills+Avatar). Replace the flat list with a
- * React Flow DAG layout, concept detail side panel, and "Visualize this"
- * modal that calls api.skills.visualize().
- */
-const DEMO_COURSE_ID = "cs188-sp2024";
+const WORLD_COURSE_ID = "cs188-sp2024";
+const SKILL_GRAPH_COURSE_ID = "cs188";
+
+const nodeTypes = { skill: SkillNode };
 
 export default function SkillsPage() {
-  const [graph, setGraph] = useState<SkillsGraph | null>(null);
+  const [world, setWorld] = useState<WorldResponse | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const { graph, status, error, insights, loadGraph, loadInsight } =
+    useSkillGraphStore();
+
+  const lectureIds = useMemo(
+    () => (world ? world.levels.map((l) => lectureIdFromOrderIndex(l.order_index)) : []),
+    [world],
+  );
+  const masteredLectureIds = useMemo(
+    () =>
+      world
+        ? world.levels
+            .filter((l) => l.state === "completed")
+            .map((l) => lectureIdFromOrderIndex(l.order_index))
+        : [],
+    [world],
+  );
 
   useEffect(() => {
     let cancelled = false;
-    api.skills.graph(DEMO_COURSE_ID).then((g) => {
-      if (!cancelled) setGraph(g);
-    });
+    api.world
+      .get(WORLD_COURSE_ID)
+      .then((w) => {
+        if (!cancelled) setWorld(w);
+      })
+      .catch(() => {
+        if (!cancelled) setWorld({ course_id: WORLD_COURSE_ID, theme: "greek", levels: [], current_level_id: null, segments: [] });
+      });
     return () => {
       cancelled = true;
     };
   }, []);
 
+  useEffect(() => {
+    if (!world) return;
+    loadGraph({
+      courseId: SKILL_GRAPH_COURSE_ID,
+      lectureIds,
+      masteredLectureIds,
+    });
+  }, [world, lectureIds, masteredLectureIds, loadGraph]);
+
+  const laidOut = useMemo(() => {
+    if (!graph) return { nodes: [] as Node[], edges: [] as Edge[] };
+    const masteredSet = new Set(masteredLectureIds);
+    const decorated: SkillDagNode[] = graph.nodes.map((n) => {
+      if (n.status === "mastered") return n;
+      const touched = n.lecture_refs.some((ref) => masteredSet.has(ref));
+      if (touched) return { ...n, status: "attempted" };
+      return n;
+    });
+    return layoutSkillGraph(decorated, graph.edges);
+  }, [graph, masteredLectureIds]);
+
+  const selectedNode = useMemo(() => {
+    if (!graph || !selectedId) return null;
+    return graph.nodes.find((n) => n.id === selectedId) ?? null;
+  }, [graph, selectedId]);
+
+  const decoratedSelectedNode = useMemo(() => {
+    if (!selectedNode) return null;
+    const masteredSet = new Set(masteredLectureIds);
+    if (selectedNode.status === "mastered") return selectedNode;
+    const touched = selectedNode.lecture_refs.some((ref) => masteredSet.has(ref));
+    return touched ? { ...selectedNode, status: "attempted" as const } : selectedNode;
+  }, [selectedNode, masteredLectureIds]);
+
+  const handleNodeClick: NodeMouseHandler = (_, node) => {
+    setSelectedId(node.id);
+    loadInsight({
+      skillId: node.id,
+      courseId: SKILL_GRAPH_COURSE_ID,
+      lectureIds,
+    });
+  };
+
   return (
-    <main className="min-h-screen bg-background">
+    <main className="flex min-h-screen flex-col bg-background">
       <TopBar />
-      <section className="mx-auto max-w-4xl px-6 py-10">
-        <h1 className="mb-6 text-3xl font-bold">Skills Graph</h1>
-        {!graph && <p className="text-muted-foreground">Loading…</p>}
-        {graph && (
-          <div className="grid gap-3">
-            {graph.skills.map((s) => (
-              <div
-                key={s.id}
-                className="rounded-lg border border-border bg-background/60 p-4"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="font-semibold">{s.name}</div>
-                  <div className="text-xs text-muted-foreground">{s.state}</div>
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">{s.description}</p>
-                {s.prerequisites.length > 0 && (
-                  <div className="mt-2 text-xs text-muted-foreground">
-                    requires: {s.prerequisites.join(", ")}
-                  </div>
-                )}
+      <section className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex items-baseline justify-between px-6 py-4">
+          <h1 className="text-2xl font-bold">Skills Graph</h1>
+          {status === "ready" && graph && (
+            <p className="text-xs text-muted-foreground">
+              {graph.nodes.length} skills · {graph.edges.length} links
+            </p>
+          )}
+        </div>
+
+        <div className="relative flex flex-1 overflow-hidden border-t border-border">
+          <div className="relative flex-1">
+            {status === "loading" && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/70 text-sm text-muted-foreground">
+                Building your skill graph…
               </div>
-            ))}
+            )}
+            {status === "error" && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-background/80 px-6 text-center">
+                <p className="text-sm text-destructive">
+                  Couldn't load skill graph.
+                </p>
+                <p className="max-w-md text-xs text-muted-foreground">{error}</p>
+                <button
+                  className="mt-2 rounded border border-border px-3 py-1 text-xs hover:bg-accent"
+                  onClick={() =>
+                    loadGraph({
+                      courseId: SKILL_GRAPH_COURSE_ID,
+                      lectureIds,
+                      masteredLectureIds,
+                    })
+                  }
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+            <ReactFlow
+              nodes={laidOut.nodes}
+              edges={laidOut.edges}
+              nodeTypes={nodeTypes}
+              onNodeClick={handleNodeClick}
+              fitView
+              fitViewOptions={{ padding: 0.2 }}
+              proOptions={{ hideAttribution: true }}
+              nodesDraggable={false}
+              nodesConnectable={false}
+              elementsSelectable
+            >
+              <Background gap={24} />
+              <MiniMap pannable zoomable className="!bg-background" />
+              <Controls showInteractive={false} />
+            </ReactFlow>
           </div>
-        )}
+
+          {decoratedSelectedNode && (
+            <SkillDetailPanel
+              node={decoratedSelectedNode}
+              entry={insights[decoratedSelectedNode.id]}
+              onClose={() => setSelectedId(null)}
+              onRetry={() =>
+                loadInsight({
+                  skillId: decoratedSelectedNode.id,
+                  courseId: SKILL_GRAPH_COURSE_ID,
+                  lectureIds,
+                })
+              }
+            />
+          )}
+        </div>
       </section>
     </main>
   );

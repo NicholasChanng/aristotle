@@ -338,6 +338,85 @@ export interface ValidateAnswerResponse {
   transcript: string | null;
 }
 
+// ---------- Skill Graph (PR #3) ----------
+
+export type SkillDagStatus = "locked" | "attempted" | "mastered";
+
+export interface SkillDagNode {
+  id: string;
+  label: string;
+  level: number;
+  status: SkillDagStatus;
+  lecture_refs: string[];
+  mastery_signals: string[];
+}
+
+export interface SkillDagEdgeDto {
+  id: string;
+  source: string;
+  target: string;
+  rationale: string;
+}
+
+export interface SkillDagGraph {
+  course_id: string;
+  nodes: SkillDagNode[];
+  edges: SkillDagEdgeDto[];
+  max_level: number;
+}
+
+export interface SkillsGraphRequest {
+  course_id?: string;
+  lecture_ids: string[];
+  mastered_lecture_ids: string[];
+}
+
+export interface SkillsGraphMetadata {
+  total_elapsed_ms: number;
+  retrieval_elapsed_ms: number;
+  llm_elapsed_ms: number;
+  retrieved_docs: number;
+  context_chars: number;
+}
+
+export interface SkillsGraphResponse {
+  graph: SkillDagGraph;
+  metadata: SkillsGraphMetadata;
+}
+
+export interface SkillInsightRequest {
+  course_id?: string;
+  lecture_ids: string[];
+  graph?: SkillDagGraph | null;
+}
+
+export interface SkillInsightAddon {
+  type: string;
+  title: string;
+  content: string;
+}
+
+export interface SkillInsightVisualization {
+  type: string;
+  content: string;
+}
+
+export interface SkillInsightResponse {
+  skill_id: string;
+  summary: string[];
+  pseudocode: string | null;
+  visualization: SkillInsightVisualization | null;
+  addons: SkillInsightAddon[];
+}
+
+/**
+ * Derive a `lec_NN` id (matches backend normalizer) from a world-level
+ * `order_index`. Keep in sync with `_normalize_lecture_id` in skills_agent.py.
+ */
+export function lectureIdFromOrderIndex(orderIndex: number): string {
+  return `lec_${String(orderIndex).padStart(2, "0")}`;
+}
+
 /**
  * Adapt a backend QuizQuestionMetadata into the frontend's Question shape so
  * existing battle UI code (speech bubble, MCQ grid, etc.) keeps working.

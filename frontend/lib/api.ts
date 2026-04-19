@@ -12,7 +12,11 @@ import type {
   GenerateQuestionsResponse,
   LevelDetailResponse,
   ProgressResponse,
+  SkillInsightRequest,
+  SkillInsightResponse,
   SkillsGraph,
+  SkillsGraphRequest,
+  SkillsGraphResponse,
   Theme,
   User,
   ValidateAnswerRequest,
@@ -94,6 +98,19 @@ export const api = {
         method: "POST",
         json: {},
       }),
+  },
+
+  skillGraph: {
+    build: (body: SkillsGraphRequest) =>
+      request<SkillsGraphResponse>("/skill-graph/graph", {
+        method: "POST",
+        json: body,
+      }),
+    insight: (skillId: string, body: SkillInsightRequest) =>
+      request<SkillInsightResponse>(
+        `/skill-graph/${encodeURIComponent(skillId)}/insight`,
+        { method: "POST", json: body },
+      ),
   },
 
   progress: {
