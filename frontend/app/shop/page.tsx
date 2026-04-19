@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import { TopBar } from "@/components/layout/TopBar";
 import { Button } from "@/components/ui/button";
+import { CloudLoadingOverlay } from "@/components/world/CloudLoadingOverlay";
 import { cn } from "@/lib/utils";
 import { useThemeManifest } from "@/lib/useTheme";
 import type { ThemeAvatar } from "@/lib/types";
@@ -63,8 +64,6 @@ export default function ShopPage() {
             </div>
           </div>
         </div>
-
-        {!manifest && <p className="text-slate-400">Loading shop…</p>}
 
         {manifest && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -169,6 +168,11 @@ export default function ShopPage() {
           </div>
         )}
       </section>
+      <CloudLoadingOverlay loading={!manifest}>
+        <div className="text-lg font-semibold text-slate-700">
+          Loading shop…
+        </div>
+      </CloudLoadingOverlay>
     </main>
   );
 }

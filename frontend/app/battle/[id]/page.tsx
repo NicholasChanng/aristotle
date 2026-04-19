@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 import { BattleScene } from "@/components/battle/BattleScene";
+import { CloudLoadingOverlay } from "@/components/world/CloudLoadingOverlay";
 import { api } from "@/lib/api";
 import {
   quizToQuestion,
@@ -148,39 +149,42 @@ export default function BattlePage({ params }: { params: { id: string } }) {
     );
   }
 
-  if (
+  const isLoading =
     !level ||
     !manifest ||
     store.phase === "idle" ||
     store.phase === "loading" ||
-    !active
-  ) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-slate-400">
-        Preparing battle…
-      </div>
-    );
-  }
+    !active;
 
-  const question = quizToQuestion(active);
+  const question = active ? quizToQuestion(active) : null;
 
   return (
-    <BattleScene
-      level={level}
-      manifest={manifest}
-      question={question}
-      userHp={store.userHp}
-      userHpMax={store.userHpMax}
-      monsterHp={store.monsterHp}
-      monsterHpMax={store.monsterHpMax}
-      onSubmit={handleSubmit}
-      onAdvance={handleAdvance}
-      phase={store.phase}
-      feedback={store.feedback}
-      lastCorrect={store.lastCorrect}
-      lastDamageDealt={store.lastDamageDealt}
-      lastDamageTaken={store.lastDamageTaken}
-      onExit={handleExit}
-    />
+    <>
+      {level && manifest && question && (
+        <BattleScene
+          level={level}
+          manifest={manifest}
+          question={question}
+          userHp={store.userHp}
+          userHpMax={store.userHpMax}
+          monsterHp={store.monsterHp}
+          monsterHpMax={store.monsterHpMax}
+          onSubmit={handleSubmit}
+          onAdvance={handleAdvance}
+          phase={store.phase}
+          feedback={store.feedback}
+          lastCorrect={store.lastCorrect}
+          lastDamageDealt={store.lastDamageDealt}
+          lastDamageTaken={store.lastDamageTaken}
+          onExit={handleExit}
+        />
+      )}
+      {isLoading && <div className="fixed inset-0 z-40 bg-black" />}
+      <CloudLoadingOverlay loading={isLoading}>
+        <div className="text-lg font-semibold text-slate-700">
+          Preparing battle…
+        </div>
+      </CloudLoadingOverlay>
+    </>
   );
 }

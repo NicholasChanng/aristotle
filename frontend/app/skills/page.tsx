@@ -14,6 +14,7 @@ import "reactflow/dist/style.css";
 import { TopBar } from "@/components/layout/TopBar";
 import { SkillDetailPanel } from "@/components/skills/SkillDetailPanel";
 import { SkillNode } from "@/components/skills/SkillNode";
+import { CloudLoadingOverlay } from "@/components/world/CloudLoadingOverlay";
 import { api } from "@/lib/api";
 import { layoutSkillGraph } from "@/lib/skillGraphLayout";
 import {
@@ -122,11 +123,6 @@ export default function SkillsPage() {
 
         <div className="relative flex flex-1 overflow-hidden border-t border-border">
           <div className="relative flex-1">
-            {status === "loading" && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/70 text-sm text-muted-foreground">
-                Building your skill graph…
-              </div>
-            )}
             {status === "error" && (
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-background/80 px-6 text-center">
                 <p className="text-sm text-destructive">
@@ -181,6 +177,11 @@ export default function SkillsPage() {
           )}
         </div>
       </section>
+      <CloudLoadingOverlay loading={status === "loading" || !world}>
+        <div className="text-lg font-semibold text-slate-700">
+          Building your skill graph…
+        </div>
+      </CloudLoadingOverlay>
     </main>
   );
 }

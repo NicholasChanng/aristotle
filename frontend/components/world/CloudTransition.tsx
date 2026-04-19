@@ -15,12 +15,14 @@ interface Props {
   onComplete?: () => void;
 }
 
-const SLIDE_DURATION = 0.55;
+const SLIDE_DURATION = 0.65;
 const HOLD_MS = 200;
 // Fast at the start, slow into the middle.
 const EASE_IN_TO_CENTER: [number, number, number, number] = [0.22, 1, 0.36, 1];
 // Slow off the middle, fast as it leaves the screen — reverse of above.
-const EASE_OUT_FROM_CENTER: [number, number, number, number] = [0.64, 0, 0.78, 0];
+const EASE_OUT_FROM_CENTER: [number, number, number, number] = [
+  0.64, 0, 0.78, 0,
+];
 
 /**
  * Two-cloud wipe used between world regions. The left and right halves of
@@ -57,11 +59,11 @@ export function CloudTransition({ trigger, onMidpoint, onComplete }: Props) {
       // Phase B: slide back out (accelerating off-screen).
       await Promise.all([
         left.start({
-          x: "-100%",
+          x: "-120%",
           transition: { duration: SLIDE_DURATION, ease: EASE_OUT_FROM_CENTER },
         }),
         right.start({
-          x: "100%",
+          x: "120%",
           transition: { duration: SLIDE_DURATION, ease: EASE_OUT_FROM_CENTER },
         }),
       ]);
@@ -80,23 +82,23 @@ export function CloudTransition({ trigger, onMidpoint, onComplete }: Props) {
   return (
     <div className="pointer-events-none absolute inset-0 z-40 overflow-hidden">
       <motion.img
-        src="/assets/clouds.png"
+        src="/assets/cloudspixelright.png"
         alt=""
         aria-hidden
         draggable={false}
-        initial={{ x: "-100%" }}
+        initial={{ x: "-120%", scale: 1.2 }}
         animate={left}
-        className="absolute inset-y-0 left-0 h-full w-auto max-w-[60%] select-none object-cover"
+        className="absolute inset-y-0 left-0 h-full w-auto max-w-[60%] select-none object-contain"
         style={{ imageRendering: "pixelated" }}
       />
       <motion.img
-        src="/assets/clouds.png"
+        src="/assets/cloudspixelleft.png"
         alt=""
         aria-hidden
         draggable={false}
-        initial={{ x: "100%" }}
+        initial={{ x: "120%", scale: 1.2 }}
         animate={right}
-        className="absolute inset-y-0 right-0 h-full w-auto max-w-[60%] -scale-x-100 select-none object-cover"
+        className="absolute inset-y-0 right-0 h-full w-auto max-w-[60%] select-none object-contain"
         style={{ imageRendering: "pixelated" }}
       />
     </div>
