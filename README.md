@@ -2,8 +2,6 @@
 
 Winner of the Best Game Award at HackPrinceton Spring 2026. 
 
-Projects that successfully create interactive, exciting, and innovative games through a variety of methods and forms. Examples include Player v. Player games or individual games.
-
 Team Members: Nicholas Channg, Sai Nellutla, Tanay Mehrish
 
 Devpost: https://devpost.com/software/larp-wmveqg
