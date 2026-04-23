@@ -1,6 +1,16 @@
-# Aristotle
+# Larp N Learn
 
-Gamified course companion web app. HackPrinceton 2026 — Education Track.
+Winner of the Game Award at HackPrinceton Spring 2026. 
+
+Projects that successfully create interactive, exciting, and innovative games through a variety of methods and forms. Examples include Player v. Player games or individual games.
+
+Team Members: Nicholas Channg, Sai Nellutla, Tanay Mehrish
+
+Devpost: https://devpost.com/software/larp-wmveqg
+
+Demo: https://aristotle-hazel.vercel.app/
+
+<img width="1611" height="1104" alt="image" src="https://github.com/user-attachments/assets/00c3bce5-5733-41d4-995c-d8a746782ebc" />
 
 Full spec: [aristotle_srs.md](aristotle_srs.md).
 
